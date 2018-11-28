@@ -40,9 +40,9 @@ public interface GoodsService {
 	/**
 	 * 根据ID获取实体
 	 * @param id
-	 * @return
+	 * @return 组合实体类型
 	 */
-	public TbGoods findOne(Long id);
+	public Goods findOne(Long id);
 	
 	
 	/**
