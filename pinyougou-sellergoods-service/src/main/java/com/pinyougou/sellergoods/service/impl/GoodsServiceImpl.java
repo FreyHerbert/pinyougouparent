@@ -95,30 +95,7 @@ public class GoodsServiceImpl implements GoodsService {
 		// 插入商品扩展表数据
 		goodsDescMapper.insert(tbGoodsDesc);
 
-		if ("1".equals(tbGoods.getIsEnableSpec())) {
-			for (TbItem item : goods.getItemList()) {
-				// 构建标题,SPU名称+规格选项
-				// SPU名称
-				String title = tbGoods.getGoodsName();
-				Map<String, Object> map = JSON.parseObject(item.getSpec());
-				for (String key : map.keySet()) {
-					title += " " + map.get(key);
-				}
-				item.setTitle(title);
-
-				setItemValues(item, goods);
-			}
-		} else {
-			// 没有启动规格
-			TbItem item = new TbItem();
-			item.setTitle(tbGoods.getGoodsName());
-			item.setPrice(tbGoods.getPrice());
-			item.setNum(999);
-			item.setStatus("1");
-			item.setIsDefault("1");
-
-			setItemValues(item, goods);
-		}
+		saveItemList(goods);
 	}
 
 	
@@ -126,10 +103,24 @@ public class GoodsServiceImpl implements GoodsService {
 	 * 修改
 	 */
 	@Override
-	public void update(TbGoods goods){
-		goodsMapper.updateByPrimaryKey(goods);
-	}	
-	
+	public void update(Goods goods){
+		TbGoods tbGoods = goods.getGoods();
+		TbGoodsDesc tbGoodsDesc = goods.getGoodsDesc();
+		// 更新基本表数据
+		goodsMapper.updateByPrimaryKey(tbGoods);
+		// 更新扩展表数据
+		goodsDescMapper.updateByPrimaryKey(tbGoodsDesc);
+
+		// 删除原有的SKU列表数据
+		TbItemExample itemExample = new TbItemExample();
+		TbItemExample.Criteria itemExampleCriteria = itemExample.createCriteria();
+		itemExampleCriteria.andGoodsIdEqualTo(tbGoods.getId());
+		itemMapper.deleteByExample(itemExample);
+
+		// 插入新的SKU列表数据
+		saveItemList(goods);
+	}
+
 	/**
 	 * 根据ID获取实体
 	 * @param id
@@ -145,6 +136,11 @@ public class GoodsServiceImpl implements GoodsService {
 		TbGoodsDesc tbGoodsDesc = goodsDescMapper.selectByPrimaryKey(id);
 		goods.setGoodsDesc(tbGoodsDesc);
 		// items 表
+		TbItemExample itemExample = new TbItemExample();
+		TbItemExample.Criteria criteria = itemExample.createCriteria();
+		criteria.andGoodsIdEqualTo(tbGoods.getId());
+		List<TbItem> tbItems = itemMapper.selectByExample(itemExample);
+		goods.setItemList(tbItems);
 		return goods;
 	}
 
@@ -233,4 +229,35 @@ public class GoodsServiceImpl implements GoodsService {
 		itemMapper.insert(item);
 	}
 
+
+	/**
+	 * 插入 SKU 列表数据
+	 */
+	private void saveItemList(Goods goods) {
+		TbGoods tbGoods = goods.getGoods();
+		if ("1".equals(tbGoods.getIsEnableSpec())) {
+			for (TbItem item : goods.getItemList()) {
+				// 构建标题,SPU名称+规格选项
+				// SPU名称
+				String title = tbGoods.getGoodsName();
+				Map<String, Object> map = JSON.parseObject(item.getSpec());
+				for (String key : map.keySet()) {
+					title += " " + map.get(key);
+				}
+				item.setTitle(title);
+
+				setItemValues(item, goods);
+			}
+		} else {
+			// 没有启动规格
+			TbItem item = new TbItem();
+			item.setTitle(tbGoods.getGoodsName());
+			item.setPrice(tbGoods.getPrice());
+			item.setNum(999);
+			item.setStatus("1");
+			item.setIsDefault("1");
+
+			setItemValues(item, goods);
+		}
+	}
 }
