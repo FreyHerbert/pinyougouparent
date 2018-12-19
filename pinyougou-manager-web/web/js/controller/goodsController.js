@@ -1,5 +1,5 @@
  //控制层 
-app.controller('goodsController' ,function($scope,$controller   ,goodsService){	
+app.controller('goodsController' ,function($scope,$controller   ,$location, goodsService, itemCatService, brandService){
 	
 	$controller('baseController',{$scope:$scope});//继承
 	
@@ -16,21 +16,34 @@ app.controller('goodsController' ,function($scope,$controller   ,goodsService){
 	$scope.findPage=function(page,rows){			
 		goodsService.findPage(page,rows).success(
 			function(response){
-				$scope.list=response.rows;	
+				$scope.list=response.rows;
 				$scope.paginationConf.totalItems=response.total;//更新总记录数
-			}			
+			}
 		);
 	}
 	
 	//查询实体 
-	$scope.findOne=function(id){				
+	$scope.findOne=function(id){
 		goodsService.findOne(id).success(
 			function(response){
 				$scope.entity= response;					
 			}
 		);				
 	}
-	
+
+    $scope.findOneOfView = function () {
+        var id = $location.search()['id'];
+        if (id == null) {
+            return;
+        }else {
+            goodsService.findOne(id).success(
+                function(response){
+                    $scope.entity= response.goods;
+                }
+            );
+		}
+    };
+
 	//保存 
 	$scope.save=function(){				
 		var serviceObject;//服务层对象  				
@@ -76,5 +89,29 @@ app.controller('goodsController' ,function($scope,$controller   ,goodsService){
 			}			
 		);
 	}
-    
+
+    $scope.status = ['未审核', '已审核', '审核未通过', '已关闭'];
+    // 商品分类列表
+    $scope.itemCatList = [];
+    $scope.findItemCatList = function () {
+        itemCatService.findAll().success(
+            function (response) {
+                for (var i = 0; i < response.length; i++){
+                    $scope.itemCatList[response[i].id] = response[i].name;
+                }
+            }
+        );
+    }
+
+    $scope.brandList = [];
+    $scope.findBrandList = function () {
+		brandService.findAll().success(
+			function (response) {
+                for (var i = 0; i < response.length; i++){
+                    $scope.brandList[response[i].id] = response[i].name;
+                }
+            }
+		);
+    }
+
 });	

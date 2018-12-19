@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- 页面meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>商品编辑</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+  
+    <link rel="stylesheet" href="../plugins/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../plugins/adminLTE/css/AdminLTE.css">
+    <link rel="stylesheet" href="../plugins/adminLTE/css/skins/_all-skins.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+	<script src="../plugins/jQuery/jquery-2.2.3.min.js"></script>
+    <script src="../plugins/bootstrap/js/bootstrap.min.js"></script>
+
+	<script type="text/javascript" src="../plugins/angularjs/angular.min.js"></script>
+	<script type="text/javascript" src="../js/base.js"></script>
+	<script type="text/javascript" src="../js/service/goodsService.js"></script>
+	<script type="text/javascript" src="../js/service/itemCatService.js"></script>
+	<script type="text/javascript" src="../js/service/brandService.js"></script>
+	<script type="text/javascript" src="../js/controller/baseController.js"></script>
+	<script type="text/javascript" src="../js/controller/goodsController.js"></script>
+    
+    
+</head>
+
+<body class="hold-transition skin-red sidebar-mini" ng-app="pinyougou" ng-controller="goodsController" ng-init="findItemCatList();findOneOfView();findBrandList()" >
+
+            <!-- 正文区域 -->
+            <section class="content">
+
+                <div class="box-body">
+
+                    <!--tab页-->
+                    <div class="nav-tabs-custom">
+
+                        <!--tab头-->
+                        <ul class="nav nav-tabs">                       		
+                            <li class="active">
+                                <a href="#home" data-toggle="tab">商品基本信息</a>                                                        
+                            </li>
+                        </ul>
+                        <!--tab头/-->
+						
+                        <!--tab内容-->
+                        <div class="tab-content">
+
+                            <!--表单内容-->
+                            <div class="tab-pane active" id="home">
+                                <div class="row data-type">
+									<div class="col-md-2 title">商品分类</div>
+		                           	  <div class="col-md-10 data">
+		                           	  	<table>
+		                           	  		<tr>
+		                           	  			<td>
+		                           	  				<input class="form-control" ng-model="itemCatList[entity.category1Id]" readonly>
+		                              			</td>
+		                              			<td>
+		                           	  				<input class="form-control select-sm" ng-model="itemCatList[entity.category2Id]" readonly>
+		                              			</td>
+		                              			<td>
+		                           	  				<input class="form-control select-sm" ng-model="itemCatList[entity.category3Id]" readonly>
+		                              			</td>
+		                              			<td>
+		                           	  				模板ID:{{entity.typeTemplateId}}
+		                              			</td>
+		                           	  		</tr>
+		                           	  	</table>
+		                              </div>
+		                           <div class="col-md-2 title">商品名称</div>
+		                           <div class="col-md-10 data">
+		                               <input type="text" class="form-control"   placeholder="商品名称"  ng-model="entity.goodsName" readonly>
+		                           </div>
+		                           
+		                           <div class="col-md-2 title">品牌</div>
+		                           <div class="col-md-10 data">
+		                              <input class="form-control" ng-model="brandList[entity.brandId]"  readonly>
+		                           </div>
+		
+								   <div class="col-md-2 title">副标题</div>
+		                           <div class="col-md-10 data">
+		                               <input type="text" class="form-control" ng-model="entity.caption"  placeholder="副标题" value="" readonly>
+		                           </div>
+		                           
+		                           <div class="col-md-2 title">价格</div>
+		                           <div class="col-md-10 data">
+		                           	   <div class="input-group">
+			                          	   <span class="input-group-addon">¥</span>
+			                               <input type="text" class="form-control" ng-model="entity.price" placeholder="价格" value="" readonly>
+		                           	   </div>
+		                           </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                   </div>
+                  <div class="btn-toolbar list-toolbar">
+				      <a href="goods.html" class="btn btn-default" >返回列表</a>
+				  </div>
+			
+            </section>
+</body>
+
+</html>
